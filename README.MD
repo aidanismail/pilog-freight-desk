@@ -1,40 +1,34 @@
 # PILOG Freight Desk
 
-Kalkulator freight dry bulk dan commercial brief untuk membandingkan Handysize dan Supramax. React menampilkan formulir serta hasil. FastAPI menjalankan perhitungan Python, pemilihan benchmark, uji risiko, Spread Matrix, dan ekspor.
+Kalkulator freight dry bulk untuk Handysize dan Supramax, dengan Spread Matrix, analisis risiko, dan Commercial Brief. Dibangun dengan React dan FastAPI.
 
 ## Jalankan di Windows
 
-Dari root repo, siapkan Python 3.12, Node 22, dan environment lokal.
+Dari root repo, gunakan Python 3.12 dan Node.js 22.
 
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 npm.cmd --prefix frontend ci
+.\.venv\Scripts\python.exe scripts/dev.py
+```
+
+Buka [http://127.0.0.1:5173](http://127.0.0.1:5173). Perubahan frontend dan backend terdeteksi saat file disimpan. Tekan `Ctrl+C` untuk berhenti.
+
+## Preview build
+
+```powershell
 npm.cmd --prefix frontend run build
 .\.venv\Scripts\python.exe -m uvicorn pilog_cfr_dss.api.main:app --app-dir src --host 127.0.0.1 --port 8000
 ```
 
-Buka `http://127.0.0.1:8000`. Satu proses FastAPI menyajikan aset React dan API. Untuk mengedit tampilan, jalankan `npm.cmd --prefix frontend run dev` di terminal terpisah sementara FastAPI memakai port 8000. Vite meneruskan permintaan API ke FastAPI.
+Buka [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-## Data demo FIS
+## Coba kasus
 
-PDF FIS disediakan sebagai file internal terpisah. Setup lokal saat ini sudah memiliki file dan snapshot. Pada checkout baru, taruh file sumber di `data/sources/market/fis/` dan impor dengan perintah berikut.
+Buka paket contoh `tests/fixtures/fd3_risk_pilog_open_hire.json`, lalu klik **Hitung freight**. Petunjuk sumber data tersedia di [dokumentasi proyek](docs/RENCANA_MIGRASI_FREIGHT_DESK.md).
 
-```powershell
-.\.venv\Scripts\python.exe scripts/import_fis_report.py data/sources/market/fis/fis-freight-index-report_2026-10-30.pdf
-```
-
-Kasus baru memakai assessment FIS terakhir yang valid. Kedua port dalam kelompok Pacific yang didokumentasikan memakai basket Pacific demo sesuai kelas. Rute yang belum terpetakan memakai HS7TC atau S11TC. Jika snapshot belum disiapkan, pengguna bisa mengisi quotation manual. Angka FIS historis, *as-of* sumber ditampilkan, dan manual override dipertahankan ketika rute berubah. Bunker Fearnpulse tetap diperbarui saat membuat kasus baru dan memiliki snapshot fallback.
-
-- `data/sources/` berisi PDF dan workbook asal.
-- `data/catalogs/` berisi port, profil kapal, dan default voyage. Regenerasi dari workbook lewat `scripts/sync_voyage_inputs.py`.
-- `data/market_snapshots/` berisi benchmark bertanggal per penyedia.
-- `runtime/` berisi cache dan hasil sementara yang dapat dibuat ulang.
-- `tests/fixtures/` berisi contoh paket impor, termasuk risiko hire PILOG dan freight PI.
-
-## Alur demo
-
-Buka paket `tests/fixtures/fd3_risk_pilog_open_hire.json`, klik **Hitung freight**, lalu buka **Commercial Brief**. Bagian 2 menjelaskan penanggung risiko, bagian 3 menunjukkan opsi kajian FFA dan rujukan klausul, bagian 5 memperlihatkan dampak skenario biaya. Rujukan klausul dicatat per perjanjian. Penghitungan settlement FFA dan transaksi berada di luar fitur demo.
+Setiap perhitungan yang selesai masuk ke **Riwayat kasus** di browser. Buka hasil lama dari riwayat atau download paket JSON untuk dipindah ke browser lain.
 
 ## Pengujian
 
@@ -45,4 +39,4 @@ $env:PYTHONPATH = 'src'
 .\.venv\Scripts\python.exe -B tests/ui/react_smoke.py
 ```
 
-Browser smoke memerlukan Edge dan build React. Baseline Streamlit dan histori iterasi tersedia pada branch `feature/freight-risk-mitigation` di commit `c7a99ca`. Detail pembaruan ada di [rencana migrasi](docs/RENCANA_MIGRASI_FREIGHT_DESK.md).
+Tes browser memakai Microsoft Edge dan build React dari bagian **Preview build**.

@@ -77,7 +77,7 @@ def commercial_brief(result):
         else:
             lines.append("  Konfirmasikan jumlah muatan dengan data kapal dan terminal; pemeriksaan TPC masih berupa perkiraan.")
         if row["commercial"] and row["commercial"]["surplus_usd"] < 0:
-            lines.append(f"  Tarif jual di bawah biaya. Naikkan minimal {n(row['commercial']['rate_change_to_break_even'])} USD/MT sampai {n(row['minimum_offer_usd_mt'])} USD/MT, atau ubah biaya/operasi.")
+            lines.append(f"  Tarif jual di bawah biaya. Naikkan minimal {n(row['commercial']['rate_change_to_break_even'], minimum=True)} USD/MT sampai {n(row['minimum_offer_usd_mt'])} USD/MT, atau ubah biaya/operasi.")
     lines += ["- Seri harga bunker pada bagian sumber adalah pembanding. Periksa jenis bahan bakar dan lokasi pembelian; harga manual mengikuti input kasus.",
         "- Terms digunakan untuk estimasi waktu operasi. Klaim demurrage/despatch tidak termasuk dalam biaya operasi."]
     if risk:
@@ -107,7 +107,7 @@ def commercial_brief(result):
                 lines.append(f"| {name} | {n(co['selling_freight_usd_mt'])} | {n(co['net_freight_revenue_usd'])} | {n(row['voyage_expenses_usd'])} | {n(row['hire_usd'])} | {n(co['surplus_usd'])} | {n(co['tce_usd_day'])} |")
     if risk:
         lines += stress_lines(risk, clean)
-    lines += ["", "Komisi 0%. Freight biaya mencakup hire, bunker, Port DA dan biaya lain yang dimasukkan; tanpa margin keuntungan otomatis. Pendapatan penjualan barang PI tidak dicampur dengan pendapatan freight PILOG.", "",
+    lines += ["", "Komisi 0,00%. Freight biaya mencakup hire, bunker, Port DA dan biaya lain yang dimasukkan; tanpa margin keuntungan otomatis. Pendapatan penjualan barang PI tidak dicampur dengan pendapatan freight PILOG.", "",
         "### Sumber dan waktu", "",
         f"Fearnpulse terakhir diambil: {price_time(case['market_snapshot'].get('fetched_at'))}.",
         "| Data | Seri / nilai | Tanggal sumber |", "|---|---|---|"]

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
+import { Download } from 'lucide-react';
 import { download, request, type Case, type Catalog, type Fields, type Port, type Row } from '../../api/client';
-import { casePort, fmt, Input, portKey, Select } from '../voyage/inputs';
+import { Input, PortPicker, Select } from '../../components/fields';
+import { Button } from '../../components/ui/button';
+import { fmt } from '../../lib/number-format';
+import { casePort, portKey, portOptions } from '../voyage/inputs';
 
 type Cell = { origin: Port; destination: Port; rate?: string; delta?: string; error?: string; scenario?: Row };
 
@@ -22,7 +26,7 @@ export function SpreadMatrix({ caseData, catalog }: { caseData: Case; catalog: C
     if (!opened) return;
     setCells([]);
     if (!origins.length || !destinations.length || origins.length * destinations.length > 25) {
-      setMessage('Pilih minimal satu port per sisi, maksimal 25 kombinasi.');
+      setMessage('Pilih minimal satu pelabuhan muat dan satu pelabuhan bongkar, hingga 25 kombinasi rute.');
       return;
     }
     setMessage('Menghitung rute…');
@@ -32,40 +36,42 @@ export function SpreadMatrix({ caseData, catalog }: { caseData: Case; catalog: C
       .catch(error => { if (current) setMessage(error.message); }), 300);
     return () => { current = false; window.clearTimeout(timer); };
   }, [opened, caseData, origins, destinations, family, basis, overrides]);
-  const picker = (label: string, values: string[], change: (items: string[]) => void) => <label>{label}
-    <select multiple size={5} value={values} onChange={event => change(Array.from(event.target.selectedOptions, x => x.value))}>
-      {catalog.ports.map(port => <option key={portKey(port)} value={portKey(port)}>{port.join(', ')}</option>)}
-    </select></label>;
-  return <section className="card"><details onToggle={event => setOpened(event.currentTarget.open)}><summary>Spread Matrix</summary>
-    <p>Pelabuhan tambahan memakai laju, biaya, dan terms dari kasus ini. Batas draft pelabuhan tambahan perlu dikonfirmasi.</p>
-    <div className="grid two">{picker('Pelabuhan muat', origins, setOrigins)}{picker('Pelabuhan bongkar', destinations, setDestinations)}</div>
-    <div className="grid three">
-      <Select label="Kelas" options={{ Handysize: 'Handysize', Supramax: 'Supramax' }} value={family} change={setFamily} />
-      <Select label="Muatan" options={{ minimum: 'Minimum', nominal: 'Nominal', maximum: 'Maksimum' }} value={basis} change={setBasis} />
-      <Select label="Tampilan" options={{ rate: 'Freight · USD/MT', delta: 'Selisih vs rute dasar · USD/MT' }} value={display} change={setDisplay} />
+  const options = portOptions([...catalog.ports, casePort(caseData, 'load'), casePort(caseData, 'discharge')]);
+  return <section className="workspace-section"><details onToggle={event => setOpened(event.currentTarget.open)}><summary>Spread Matrix</summary>
+    <p className="mb-4 text-sm text-pilog-muted">Pelabuhan tambahan memakai laju, biaya, dan laytime terms dari kasus ini. Isi batas draft tiap pelabuhan jika tersedia.</p>
+    <div className="mb-3 grid grid-cols-1 gap-3.5 min-[681px]:grid-cols-2">
+      <PortPicker label="Pelabuhan muat" options={options} values={origins} update={setOrigins} />
+      <PortPicker label="Pelabuhan bongkar" options={options} values={destinations} update={setDestinations} />
     </div>
-    {alternatives.length > 0 && <details><summary>Ubah asumsi pelabuhan tambahan</summary>
+    <div className="mb-3 grid grid-cols-1 gap-3.5 min-[681px]:grid-cols-3 [&>*]:min-w-0">
+      <Select label="Kelas kapal" options={{ Handysize: 'Handysize', Supramax: 'Supramax' }} value={family} change={setFamily} />
+      <Select label="Skenario muatan" options={{ minimum: 'Minimum', nominal: 'Nominal', maximum: 'Maksimum' }} value={basis} change={setBasis} />
+      <Select label="Angka yang ditampilkan" options={{ rate: 'Freight (USD/MT)', delta: 'Selisih dari rute dasar (USD/MT)' }} value={display} change={setDisplay} />
+    </div>
+    {alternatives.length > 0 && <details><summary>Atur pelabuhan tambahan</summary>
       {alternatives.map(port => {
         const [side, name, country] = port;
         const key = JSON.stringify(port);
         const update = (name: string, value: unknown) => setOverrides(old => ({ ...old, [key]: { ...old[key], [name]: value } }));
-        return <div key={key}><h3>{side === 'load' ? 'Muat' : 'Bongkar'} · {name}, {country}</h3><div className="grid">
-          {([['rate_mt_day', 'Laju · MT/hari'], ['port_da_usd', 'Port DA · USD'], ['draft_limit_m', 'Batas draft · m'],
-            ['time_margin_percent', 'Margin waktu · %']] as const).map(([name, label]) => <Input key={name} label={label} type="number"
+        return <div key={key}><h3>{side === 'load' ? 'Muat' : 'Bongkar'} · {name}, {country}</h3><div className="mb-3 grid grid-cols-1 gap-3.5 min-[681px]:grid-cols-[repeat(auto-fit,minmax(190px,1fr))] [&>*]:min-w-0">
+          {([['rate_mt_day', 'Laju penanganan (MT/hari)'], ['port_da_usd', 'Port DA (USD)'], ['draft_limit_m', 'Batas draft (m)'],
+            ['time_margin_percent', 'Margin waktu (%)']] as const).map(([name, label]) => <Input key={name} label={label} type="number"
               value={overrides[key]?.[name] ?? (name === 'draft_limit_m' ? null : caseData.ports[side][name])}
               change={value => update(name, value || null)} />)}
-          <Select label="Terms" options={Object.fromEntries(Object.entries(catalog.terms).map(([key, item]) => [key, item.label ?? key]))}
+          <Select label="Laytime terms" options={Object.fromEntries(Object.entries(catalog.terms).map(([key, item]) => [key, item.label ?? key]))}
             value={String(overrides[key]?.terms ?? caseData.ports[side].terms)} change={value => update('terms', value)} />
         </div></div>;
       })}
     </details>}
     {message && <p role="status">{message}</p>}
-    {cells.length > 0 && <><div className="table-wrap"><table><thead><tr><th>Pelabuhan bongkar</th>
+    {cells.length > 0 && <><div className="overflow-x-auto"><table><thead><tr><th>Pelabuhan bongkar</th>
       {origins.map(key => <th key={key}>{(JSON.parse(key) as Port)[0]}</th>)}</tr></thead>
       <tbody>{destinations.map(dest => <tr key={dest}><th>{(JSON.parse(dest) as Port)[0]}</th>{origins.map(origin => {
         const cell = cells.find(c => portKey(c.origin) === origin && portKey(c.destination) === dest);
         return <td key={origin} title={cell?.error}>{fmt(display === 'rate' ? cell?.rate : cell?.delta)}</td>;
       })}</tr>)}</tbody></table></div>
-      <button type="button" onClick={() => download(JSON.stringify(cells, null, 2), 'spread-matrix.json', 'application/json')}>Download matrix</button></>}
+      <Button variant="outline" size="sm" onClick={() => download(JSON.stringify(cells, null, 2), 'spread-matrix.json', 'application/json')}>
+        <Download aria-hidden /> Download matrix
+      </Button></>}
   </details></section>;
 }

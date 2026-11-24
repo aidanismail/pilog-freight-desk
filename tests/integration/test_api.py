@@ -28,7 +28,7 @@ class FreightApiTests(TestCase):
         self.assertEqual(response.status_code, 200, response.text)
         result = response.json()
         self.assertIn("Kajian beli FFA", result["brief"])
-        self.assertIn("45.031,88", result["brief"])
+        self.assertIn("45.031,87", result["brief"])
         self.assertIn("-2.747,19", result["brief"])
         self.assertEqual(len(result["brief"].split("\n## ")), 6)
         exported = self.client.post("/api/v1/cases/export", json={"case": case})

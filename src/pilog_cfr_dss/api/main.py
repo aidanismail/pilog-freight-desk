@@ -15,7 +15,7 @@ from pilog_cfr_dss.application.freight_desk import (
     override, select_terms, serializable, update_route,
 )
 from pilog_cfr_dss.calculations.port_time import working_windows
-from pilog_cfr_dss.models.freight_desk import COMMODITIES, TERMS
+from pilog_cfr_dss.models.freight_desk import COMMODITIES, SCHEMA, TERMS
 from pilog_cfr_dss.models.risk import AGREEMENTS, BASES, PARTIES, STATUSES, STRESSES, voyage_scope
 from pilog_cfr_dss.reporting.commercial_brief import commercial_brief
 from pilog_cfr_dss.sources.baltic_profiles import URL as BALTIC_URL, verify_benchmarks
@@ -163,8 +163,8 @@ def create_app(root=ROOT):
         market = {"prices": destination_context(snapshot, case["commodity"], destination),
                   "voyages": [item for item in snapshot["records"] if item["kind"] == "freight"
                               and item["product"] in (case["commodity"], "dry_bulk_fertilizer")]}
-        return {"case": serializable(case), "result": serializable(result), "brief": commercial_brief(result),
-                "market": serializable(market)}
+        return {"case": serializable(result["case"]), "result": serializable(result), "brief": commercial_brief(result),
+                "market": serializable(market), "package_format": SCHEMA}
 
     @app.post("/api/v1/matrix")
     def spread(payload: MatrixRequest):

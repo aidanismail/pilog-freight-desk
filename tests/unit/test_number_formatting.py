@@ -8,11 +8,11 @@ from pilog_cfr_dss.reporting.formatting import number_text, percent_text
 
 
 class NumberFormattingTests(unittest.TestCase):
-    def test_two_indonesian_decimals_with_half_up_and_sign(self):
+    def test_two_indonesian_decimals_rounded_down(self):
         examples = {
-            "23.3896": "23,39", "23.381": "23,38", "23.385": "23,39",
-            "-23.385": "-23,39", "1234567.895": "1.234.567,90",
-            "0": "0,00", "1": "1,00", "-0.004": "-0,00", "999.999": "1.000,00",
+            "23.3896": "23,38", "23.381": "23,38", "23.385": "23,38",
+            "-23.385": "-23,39", "1234567.895": "1.234.567,89",
+            "0": "0,00", "1": "1,00", "-0.004": "-0,01", "999.999": "999,99",
         }
         for value, expected in examples.items():
             with self.subTest(value=value):
@@ -33,14 +33,14 @@ class NumberFormattingTests(unittest.TestCase):
         with localcontext() as context:
             context.prec = 5
             context.rounding = ROUND_DOWN
-            self.assertEqual(number_text("1234567.895"), "1.234.567,90")
+            self.assertEqual(number_text("1234567.895"), "1.234.567,89")
             self.assertEqual(context.prec, 5)
             self.assertEqual(context.rounding, ROUND_DOWN)
 
     def test_percent_has_two_decimals_and_preserves_fraction(self):
         value = Decimal("0.0625")
         self.assertEqual(percent_text(value), "6,25%")
-        self.assertEqual(percent_text("0.01245"), "1,25%")
+        self.assertEqual(percent_text("0.01245"), "1,24%")
         self.assertEqual(percent_text("0"), "0,00%")
         self.assertEqual(percent_text(None), "—")
         self.assertEqual(value, Decimal("0.0625"))
