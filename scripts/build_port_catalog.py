@@ -12,8 +12,8 @@ import searoute
 from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parents[1]
-ARCHIVE = ROOT/'data/raw/unlocode_2025_1.zip'
-OUTPUT = ROOT/'data/processed/port_locations_unlocode.json'
+ARCHIVE = ROOT/'data/sources/operations/unlocode_2025_1.zip'
+OUTPUT = ROOT/'data/catalogs/port_locations_unlocode.json'
 ALIASES = {'South Korea':'KR', 'Russia':'RU', 'Vietnam':'VN', 'Taiwan':'TW',
            'Turkey':'TR', 'Brunei':'BN', 'Venezuela':'VE', 'United Kingdom':'GB',
            'United States':'US', 'Libya':'LY'}
@@ -46,7 +46,7 @@ def build():
                 if len(row) < 11 or not row[2] or '1' not in row[6]:
                     continue
                 records.append(row)
-    wb=load_workbook(ROOT/'data/raw/Ports.xlsx',read_only=True,data_only=True)
+    wb=load_workbook(ROOT/'data/sources/operations/ports.xlsx',read_only=True,data_only=True)
     try:
         requested = [(str(r[1]).strip(),str(r[0]).strip()) for r in list(wb.active.values)[1:] if r[0] and r[1]]
     finally:

@@ -7,7 +7,7 @@ from pilog_cfr_dss.reporting.commercial_brief import commercial_brief
 
 
 ROOT = Path(__file__).resolve().parents[2]
-PACKAGES = ROOT / "outputs/test_cases"
+PACKAGES = ROOT / "tests/fixtures"
 
 
 def load(name="pilog_open_hire"):

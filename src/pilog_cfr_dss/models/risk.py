@@ -95,6 +95,15 @@ def risk_input(case):
     demurrage = profile("demurrage")
     claims = {key: optional_number(demurrage, key, Decimal(0)) for key in ("payable_usd", "recoverable_usd")}
     claims.update(evidence=text(demurrage, "evidence"), basis=text(demurrage, "basis"))
+    clauses = profile("clauses")
+    for contract, clause in clauses.items():
+        if contract not in AGREEMENTS or not isinstance(clause, dict):
+            raise ValueError("Kontrak untuk klausul tidak valid.")
+        status = text(clause, "status") or "unknown"
+        reference = text(clause, "reference")
+        text(clause, "coverage")
+        if status not in ("unknown", "review", "recorded") or (status == "recorded" and not reference):
+            raise ValueError("Klausul tercatat membutuhkan dokumen atau nomor pasal.")
     recurring = data.get("recurring_program", False)
     if not isinstance(recurring, bool):
         raise ValueError("Status program berulang tidak valid.")

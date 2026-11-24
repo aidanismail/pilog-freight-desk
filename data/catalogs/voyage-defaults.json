@@ -1,0 +1,142 @@
+{
+  "voyage_version": "VE-VOYAGES.1",
+  "source_sha256": "e217873df34b71e47efdac401aeb5e30e245fed523210eb7e693fbd10447c810",
+  "voyages": [
+    {
+      "voyage_id": "bontang_mundra",
+      "label": "Bontang → Mundra",
+      "sheet": "Bontang-Mundra",
+      "fields": {
+        "loading_port": "Bontang",
+        "discharging_port": "Mundra",
+        "cargo_description": "UREA GRANULAR BULK",
+        "cargo_category": "dry_bulk",
+        "cargo_mt": "30000",
+        "voyage_boundary": "laden_only",
+        "loading_rate_mt_day": "5000",
+        "discharge_rate_mt_day": "5000",
+        "waiting_days": "0",
+        "port_other_total_usd": "200000"
+      },
+      "source_cells": {
+        "loading_port": "B9",
+        "discharging_port": "B9",
+        "cargo_description": "B5",
+        "cargo_category": "B5",
+        "cargo_mt": "D20/B41",
+        "voyage_boundary": "B10/H10",
+        "loading_rate_mt_day": "D12",
+        "discharge_rate_mt_day": "F12",
+        "waiting_days": "H11",
+        "port_other_total_usd": "I33:I37"
+      },
+      "source_reference": "data/sources/operations/voyage-estimate.xlsx",
+      "source_sha256": "e217873df34b71e47efdac401aeb5e30e245fed523210eb7e693fbd10447c810",
+      "distance_reference": null,
+      "source_status": "simulation_only_workbook_case",
+      "note": "Kasus urea contoh; muatan, handling, waktu tunggu dan biaya pelabuhan adalah asumsi demo, bukan data aktual terminal."
+    },
+    {
+      "voyage_id": "bontang_davao",
+      "label": "Bontang → Davao",
+      "sheet": "Bontang-Davao",
+      "fields": {
+        "loading_port": "Bontang",
+        "discharging_port": "Davao",
+        "cargo_description": "UREA GRANULAR BULK",
+        "cargo_category": "dry_bulk",
+        "cargo_mt": "28000",
+        "voyage_boundary": "laden_only",
+        "loading_rate_mt_day": "5000",
+        "discharge_rate_mt_day": "4500",
+        "waiting_days": "0.5",
+        "port_other_total_usd": "90000"
+      },
+      "source_cells": {
+        "loading_port": "B9",
+        "discharging_port": "B9",
+        "cargo_description": "B5",
+        "cargo_category": "B5",
+        "cargo_mt": "D20/B41",
+        "voyage_boundary": "B10/H10",
+        "loading_rate_mt_day": "D12",
+        "discharge_rate_mt_day": "F12",
+        "waiting_days": "H11",
+        "port_other_total_usd": "I33:I37"
+      },
+      "source_reference": "data/sources/operations/voyage-estimate.xlsx",
+      "source_sha256": "e217873df34b71e47efdac401aeb5e30e245fed523210eb7e693fbd10447c810",
+      "distance_reference": null,
+      "source_status": "simulation_only_workbook_case",
+      "note": "Kasus urea contoh; muatan, handling, waktu tunggu dan biaya pelabuhan adalah asumsi demo, bukan data aktual terminal."
+    },
+    {
+      "voyage_id": "bontang_bangkok",
+      "label": "Bontang → Bangkok",
+      "sheet": "Bontang-Bangkok",
+      "fields": {
+        "loading_port": "Bontang",
+        "discharging_port": "Bangkok",
+        "cargo_description": "UREA GRANULAR BULK",
+        "cargo_category": "dry_bulk",
+        "cargo_mt": "32000",
+        "voyage_boundary": "laden_only",
+        "loading_rate_mt_day": "5000",
+        "discharge_rate_mt_day": "4000",
+        "waiting_days": "1",
+        "port_other_total_usd": "120000"
+      },
+      "source_cells": {
+        "loading_port": "B9",
+        "discharging_port": "B9",
+        "cargo_description": "B5",
+        "cargo_category": "B5",
+        "cargo_mt": "D20/B41",
+        "voyage_boundary": "B10/H10",
+        "loading_rate_mt_day": "D12",
+        "discharge_rate_mt_day": "F12",
+        "waiting_days": "H11",
+        "port_other_total_usd": "I33:I37"
+      },
+      "source_reference": "data/sources/operations/voyage-estimate.xlsx",
+      "source_sha256": "e217873df34b71e47efdac401aeb5e30e245fed523210eb7e693fbd10447c810",
+      "distance_reference": null,
+      "source_status": "simulation_only_workbook_case",
+      "note": "Kasus urea contoh; muatan, handling, waktu tunggu dan biaya pelabuhan adalah asumsi demo, bukan data aktual terminal."
+    },
+    {
+      "voyage_id": "bontang_hai_phong",
+      "label": "Bontang → Hai Phong",
+      "sheet": "Bontang-Hai Phong",
+      "fields": {
+        "loading_port": "Bontang",
+        "discharging_port": "Hai Phong",
+        "cargo_description": "UREA GRANULAR BULK",
+        "cargo_category": "dry_bulk",
+        "cargo_mt": "29000",
+        "voyage_boundary": "laden_only",
+        "loading_rate_mt_day": "5000",
+        "discharge_rate_mt_day": "5000",
+        "waiting_days": "0.5",
+        "port_other_total_usd": "110000"
+      },
+      "source_cells": {
+        "loading_port": "B9",
+        "discharging_port": "B9",
+        "cargo_description": "B5",
+        "cargo_category": "B5",
+        "cargo_mt": "D20/B41",
+        "voyage_boundary": "B10/H10",
+        "loading_rate_mt_day": "D12",
+        "discharge_rate_mt_day": "F12",
+        "waiting_days": "H11",
+        "port_other_total_usd": "I33:I37"
+      },
+      "source_reference": "data/sources/operations/voyage-estimate.xlsx",
+      "source_sha256": "e217873df34b71e47efdac401aeb5e30e245fed523210eb7e693fbd10447c810",
+      "distance_reference": null,
+      "source_status": "simulation_only_workbook_case",
+      "note": "Kasus urea contoh; muatan, handling, waktu tunggu dan biaya pelabuhan adalah asumsi demo, bukan data aktual terminal."
+    }
+  ]
+}

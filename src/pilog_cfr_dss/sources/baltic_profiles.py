@@ -8,7 +8,7 @@ import re
 import requests
 
 URL = "https://www.balticexchange.com/en/data-services/market-information0/dry-services.html"
-SNAPSHOT = Path(__file__).resolve().parents[3]/'data/processed/baltic_vessel_benchmarks.json'
+SNAPSHOT = Path(__file__).resolve().parents[3]/'data/catalogs/baltic_vessel_benchmarks.json'
 
 
 def read_snapshot():

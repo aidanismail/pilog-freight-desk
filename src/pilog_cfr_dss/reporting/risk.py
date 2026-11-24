@@ -51,7 +51,7 @@ def exposure_lines(result, clean):
     return lines
 
 
-def action_lines(analysis):
+def action_lines(analysis, case, clean):
     lines = ["", "### Opsi mitigasi", "", "| Kapal | Risiko | Penanggung tindakan | Tindakan dan syarat |",
              "|---|---|---|---|"]
     options = [(row["priority"], family, key, row) for family, key, row in
@@ -60,7 +60,17 @@ def action_lines(analysis):
         lines.append(f"| {family} | {LABELS[key]} | {row['team']} | {row['action']} |")
         for option, conditions in row["options"]:
             lines.append(f"| {family} | {LABELS[key]} | {row['team']} | **{option}.** {conditions} |")
-    return lines if options else []
+    if not options:
+        lines = []
+    clauses = case["risk_assessment"].get("clauses", {})
+    if clauses:
+        lines += ["", "### Klausul / tindak lanjut", "", "| Perjanjian | Status | Rujukan | Cakupan |", "|---|---|---|---|"]
+        labels = {"unknown": "Belum diketahui", "review": "Perlu review", "recorded": "Tercatat"}
+        for key, clause in clauses.items():
+            status = labels[clause.get("status") or "unknown"] if analysis["scope_matches"] else "Perlu review cakupan"
+            lines.append(f"| {AGREEMENTS[key]} | {status} | {clean(clause.get('reference') or '—')} | {clean(clause.get('coverage') or '—')} |")
+        lines += ["", "Konfirmasikan klausul penyesuaian pada perjanjian terkait. Kajian FFA ditangani sebagai keputusan lindung nilai tersendiri."]
+    return lines
 
 
 def stress_lines(analysis, clean):

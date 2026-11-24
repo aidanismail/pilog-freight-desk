@@ -56,10 +56,12 @@ def commercial_brief(result):
             continue
         source = case['sources'].get('profiles.' + name + '.hire_usd_day', case['sources'].get('hire_usd_day', {}))
         status = source.get('status')
-        label = ('KOBC ' + source.get('benchmark_code', '') + ' — ' + source.get('description', '') if status == 'market_benchmark'
-                 else 'Input manual' if status == 'manual_override' else 'Nilai awal / input kasus')
-        lines.append(f"| {name} | {n(row['hire_rate_usd_day'])} | {clean(label)} | {source.get('observed_on', '—') if status == 'market_benchmark' else '—'} |")
-    lines.append("KOBC: standar kapal 33.000/58.000 DWT dan komisi total 5%; kalkulasi kasus PILOG memakai komisi 0%. Benchmark bukan quotation kapal.")
+        label = ('FIS ' + source.get('benchmark_code', '') + ' · Historis' if status == 'market_benchmark'
+                 else 'Input manual' if status == 'manual_override' else source.get('source', 'Nilai awal / input kasus'))
+        observed = source.get('observed_on') if status != 'manual_override' else None
+        observed = observed or '—'
+        lines.append(f"| {name} | {n(row['hire_rate_usd_day'])} | {clean(label)} | {observed} |")
+    lines.append("Benchmark hire adalah pembanding historis untuk demo. Masukkan quotation kapal untuk memakai harga yang ditawarkan.")
     if not candidates:
         lines.append("Estimasi biaya belum tersedia untuk muatan nominal. Lihat hasil pemeriksaan di atas.")
     if risk:
@@ -79,7 +81,7 @@ def commercial_brief(result):
     lines += ["- Seri harga bunker pada bagian sumber adalah pembanding. Periksa jenis bahan bakar dan lokasi pembelian; harga manual mengikuti input kasus.",
         "- Terms digunakan untuk estimasi waktu operasi. Klaim demurrage/despatch tidak termasuk dalam biaya operasi."]
     if risk:
-        lines += action_lines(risk)
+        lines += action_lines(risk, case, clean)
     lines += ["",
         "## 4. Dampak logistik", "",
         "| Kapal | Quantity | Cargo MT | Hari voyage | Freight biaya USD/MT | Hasil |",
