@@ -35,7 +35,7 @@ def _record(path, digest, publisher, date, product, label, low, high, page, basi
         raise ValueError("INVALID_ASSESSMENT_RANGE")
     return dict(product=product, publisher=publisher, label=label, low=low, high=high,
                 basis=basis, unit="USD/MT", observation_date=date, page=page,
-                source_file=path.name, source_reference="public/" + path.name,
+                source_file=path.name, source_reference=f"data/sources/market/{publisher.lower()}/" + path.name,
                 source_sha256=digest, evidence="table", kind=kind,
                 parser_version=PARSER_VERSION, **extra)
 
@@ -128,7 +128,7 @@ def read_assessments(root):
     records, errors = [], []
     for prefix in ("Argus", "Fertecon"):
         candidates = []
-        for path in (Path(root) / "public").glob(prefix + "*Nitrogen*.pdf"):
+        for path in (Path(root) / "data/sources/market" / prefix.lower()).glob(prefix + "*Nitrogen*.pdf"):
             try:
                 items = _read(str(path.resolve()), sha256(path.read_bytes()).hexdigest())
                 if not items:

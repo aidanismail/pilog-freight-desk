@@ -145,26 +145,13 @@ def fetch_snapshot() -> dict:
     return normalize_payloads(raw, datetime.now(timezone.utc).isoformat())
 
 
-def save_snapshot(snapshot: dict, root: Path) -> Path:
-    raw_dir = root / "data/raw/fearnpulse" / snapshot["snapshot_id"]
-    raw_dir.mkdir(parents=True, exist_ok=False)
-    for name, content in snapshot["raw_payloads"].items():
-        if Path(name).name != name:
-            raise ValueError("INVALID_MARKET_PAYLOAD_PATH")
-        (raw_dir / name).write_text(content, encoding="utf-8")
-    path = root / "data/processed" / (snapshot["snapshot_id"] + ".json")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    return path
-
-
 def save_runtime_snapshot(snapshot: dict, folder: Path) -> None:
     """Keep fetched data outside source seeds; replace atomically."""
     identifier = snapshot['snapshot_id']
     if not isinstance(identifier, str) or not identifier.startswith('fp_') or not all(c.isalnum() or c == '_' for c in identifier):
         raise ValueError('INVALID_SNAPSHOT_ID')
     folder.mkdir(parents=True, exist_ok=True)
-    destination = folder / 'fp_latest.json'
+    destination = folder / 'market_latest.json'
     if destination.exists():
         try:
             existing = json.loads(destination.read_text(encoding='utf-8'))
@@ -181,9 +168,9 @@ def save_runtime_snapshot(snapshot: dict, folder: Path) -> None:
 
 
 def latest_saved(root: Path, runtime_folder: Path | None = None) -> dict | None:
-    paths = list((root / "data/processed").glob("fp_*.json"))
+    paths = list((root / "data/market_snapshots/fearnpulse").glob("market_*.json"))
     if runtime_folder:
-        paths.extend(runtime_folder.glob('fp_*.json'))
+        paths.extend(runtime_folder.glob('market_*.json'))
     snapshots = []
     for path in paths:
         try:

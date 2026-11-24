@@ -100,7 +100,7 @@ class MarketParserTests(unittest.TestCase):
 
 class WorkbookProfilesTests(unittest.TestCase):
     def test_all_four_profiles_classified_and_laden_inputs_mapped(self):
-        result = read_profiles(ROOT / "data/raw/Voyage Estimate.xlsx")
+        result = read_profiles(ROOT / "data/sources/operations/voyage-estimate.xlsx")
         profiles = {p["sheet"]: p for p in result["profiles"]}
         self.assertEqual(set(profiles), {"Bontang-Mundra", "Bontang-Davao", "Bontang-Bangkok", "Bontang-Hai Phong"})
         self.assertEqual(profiles["Bontang-Mundra"]["fields"]["dwt_mt"], "36000")
@@ -114,7 +114,7 @@ class WorkbookProfilesTests(unittest.TestCase):
 
     def test_two_handysize_two_supramax_have_distinct_physical_assumptions(self):
         from collections import Counter
-        result = read_profiles(ROOT / "data/raw/Voyage Estimate.xlsx")
+        result = read_profiles(ROOT / "data/sources/operations/voyage-estimate.xlsx")
         profiles = result["profiles"]
         self.assertEqual(Counter(p["vessel_class"] for p in profiles), {"Handysize":2,"Supramax":2})
         self.assertEqual({p["fields"]["dwt_mt"] for p in profiles},{"36000","38000","54000","58000"})

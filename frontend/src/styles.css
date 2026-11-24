@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Inter, "Segoe UI", sans-serif;
+  --color-pilog-ink: #182a3c;
+  --color-pilog-canvas: #f4f7fb;
+  --color-pilog-line: #d7e0eb;
+  --color-pilog-control: #a9bbcd;
+  --color-pilog-primary: #075ba7;
+  --color-pilog-action: #164a85;
+  --color-pilog-focus: #1b65b3;
+  --color-pilog-muted: #42617f;
+  --color-pilog-notice: #ebf3ff;
+  --color-pilog-error: #fce9e9;
+  --color-pilog-danger: #8f2525;
+  --color-pilog-negative: #9d2632;
+  --color-pilog-positive: #166044;
+  --color-pilog-table: #edf3f9;
+}
+
+@layer base {
+  body {
+    @apply bg-pilog-canvas font-sans text-pilog-ink;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply leading-tight font-semibold;
+  }
+  h1 {
+    @apply text-[clamp(1.35rem,3vw,1.85rem)];
+  }
+  h2 {
+    @apply mb-4 text-lg tracking-tight;
+  }
+  h3 {
+    @apply mb-3 text-sm;
+  }
+
+  label {
+    @apply text-sm leading-snug font-medium;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-pilog-focus;
+  }
+
+  details {
+    @apply mt-3 border-t border-pilog-line pt-3;
+  }
+  section > details:only-child {
+    @apply m-0 border-0 p-0;
+  }
+  details[open] > summary {
+    @apply mb-3;
+  }
+  summary {
+    @apply cursor-pointer rounded-sm text-sm font-semibold text-pilog-action hover:text-pilog-primary;
+  }
+  small {
+    @apply text-sm text-pilog-muted;
+  }
+
+  table {
+    @apply mt-1.5 mb-3 w-full border-collapse text-sm;
+  }
+  th,
+  td {
+    @apply border-b border-pilog-line px-2.5 py-2 text-left;
+  }
+  th {
+    @apply bg-pilog-table font-semibold;
+  }
+  td {
+    @apply tabular-nums;
+  }
+}
+
+@layer components {
+  .workspace-section {
+    @apply mb-4 min-w-0 rounded-xl border border-pilog-line bg-white p-4 shadow-xs sm:p-5 lg:p-6;
+  }
+}

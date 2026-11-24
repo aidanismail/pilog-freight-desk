@@ -1,6 +1,7 @@
 """Presentation only: every amount and action comes from engine/rules."""
 from pilog_cfr_dss.reporting.formatting import number_text as n, price_time
 from pilog_cfr_dss.models.freight_desk import COMMODITIES
+from pilog_cfr_dss.reporting.risk import action_lines, exposure_lines, stress_lines
 
 def clean(value):
     return str(value).replace("|", "/").replace("\r", " ").replace("\n", " ")
@@ -12,12 +13,17 @@ CHECK = {"WEIGHT": "Berat", "VOLUME": "Ruang palka", "DRAFT": "Draft"}
 
 def commercial_brief(result):
     case, rec = result["case"], result["recommendation"]
+    risk = result.get("risk_assessment")
     load, discharge = case["ports"]["load"], case["ports"]["discharge"]
     candidates = [result["classes"][name]["nominal"] for name in rec["selected"]]
     lines = ["# Commercial Brief — PILOG", "",
         f"{clean(load['name'])} → {clean(discharge['name'])} · {COMMODITIES[case['commodity']]} · {n(case['cargo_mt'])} MT",
         "", f"Dihitung {price_time(result['calculated_at'])} · Kasus {clean(result['case_id'])} · Formula {result['formula_version']}", "",
-        "## 1. Rekomendasi komersial", "", rec["action"], "",
+        "## 1. Rekomendasi komersial", "", rec["action"], ""]
+    if risk and (primary := risk["primary"]):
+        lines += [f"**Tindakan utama risiko · {primary['vessel_class']} · {primary['team']}**", "",
+                  primary["action"], primary["reason"], ""]
+    lines += [
         "| Kapal | Hari | Total biaya USD | Freight biaya USD/MT | Minimum penawaran USD/MT |",
         "|---|---:|---:|---:|---:|"]
     for name, scenarios in result["classes"].items():
@@ -50,12 +56,16 @@ def commercial_brief(result):
             continue
         source = case['sources'].get('profiles.' + name + '.hire_usd_day', case['sources'].get('hire_usd_day', {}))
         status = source.get('status')
-        label = ('KOBC ' + source.get('benchmark_code', '') + ' — ' + source.get('description', '') if status == 'market_benchmark'
-                 else 'Input manual' if status == 'manual_override' else 'Nilai awal / input kasus')
-        lines.append(f"| {name} | {n(row['hire_rate_usd_day'])} | {clean(label)} | {source.get('observed_on', '—') if status == 'market_benchmark' else '—'} |")
-    lines.append("KOBC: standar kapal 33.000/58.000 DWT dan komisi total 5%; kalkulasi kasus PILOG memakai komisi 0%. Benchmark bukan quotation kapal.")
+        label = ('FIS ' + source.get('benchmark_code', '') + ' · Historis' if status == 'market_benchmark'
+                 else 'Input manual' if status == 'manual_override' else source.get('source', 'Nilai awal / input kasus'))
+        observed = source.get('observed_on') if status != 'manual_override' else None
+        observed = observed or '—'
+        lines.append(f"| {name} | {n(row['hire_rate_usd_day'])} | {clean(label)} | {observed} |")
+    lines.append("Benchmark hire adalah pembanding historis untuk demo. Masukkan quotation kapal untuk memakai harga yang ditawarkan.")
     if not candidates:
         lines.append("Estimasi biaya belum tersedia untuk muatan nominal. Lihat hasil pemeriksaan di atas.")
+    if risk:
+        lines += exposure_lines(result, clean)
     lines += ["", "## 3. Risiko dan tindakan", ""]
     for row in candidates:
         cap = row["capacity"]
@@ -67,9 +77,12 @@ def commercial_brief(result):
         else:
             lines.append("  Konfirmasikan jumlah muatan dengan data kapal dan terminal; pemeriksaan TPC masih berupa perkiraan.")
         if row["commercial"] and row["commercial"]["surplus_usd"] < 0:
-            lines.append(f"  Tarif jual di bawah biaya. Naikkan minimal {n(row['commercial']['rate_change_to_break_even'])} USD/MT sampai {n(row['minimum_offer_usd_mt'])} USD/MT, atau ubah biaya/operasi.")
+            lines.append(f"  Tarif jual di bawah biaya. Naikkan minimal {n(row['commercial']['rate_change_to_break_even'], minimum=True)} USD/MT sampai {n(row['minimum_offer_usd_mt'])} USD/MT, atau ubah biaya/operasi.")
     lines += ["- Seri harga bunker pada bagian sumber adalah pembanding. Periksa jenis bahan bakar dan lokasi pembelian; harga manual mengikuti input kasus.",
-        "- Terms digunakan untuk estimasi waktu operasi. Klaim demurrage/despatch tidak termasuk.", "",
+        "- Terms digunakan untuk estimasi waktu operasi. Klaim demurrage/despatch tidak termasuk dalam biaya operasi."]
+    if risk:
+        lines += action_lines(risk, case, clean)
+    lines += ["",
         "## 4. Dampak logistik", "",
         "| Kapal | Quantity | Cargo MT | Hari voyage | Freight biaya USD/MT | Hasil |",
         "|---|---|---:|---:|---:|---|"]
@@ -92,7 +105,9 @@ def commercial_brief(result):
             if row["feasible"]:
                 co = row["commercial"]
                 lines.append(f"| {name} | {n(co['selling_freight_usd_mt'])} | {n(co['net_freight_revenue_usd'])} | {n(row['voyage_expenses_usd'])} | {n(row['hire_usd'])} | {n(co['surplus_usd'])} | {n(co['tce_usd_day'])} |")
-    lines += ["", "Komisi 0%. Freight biaya mencakup hire, bunker, Port DA dan biaya lain yang dimasukkan; tanpa margin keuntungan otomatis. Pendapatan penjualan barang PI tidak dicampur dengan pendapatan freight PILOG.", "",
+    if risk:
+        lines += stress_lines(risk, clean)
+    lines += ["", "Komisi 0,00%. Freight biaya mencakup hire, bunker, Port DA dan biaya lain yang dimasukkan; tanpa margin keuntungan otomatis. Pendapatan penjualan barang PI tidak dicampur dengan pendapatan freight PILOG.", "",
         "### Sumber dan waktu", "",
         f"Fearnpulse terakhir diambil: {price_time(case['market_snapshot'].get('fetched_at'))}.",
         "| Data | Seri / nilai | Tanggal sumber |", "|---|---|---|"]

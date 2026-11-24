@@ -8,7 +8,7 @@ from pilog_cfr_dss.calculations.costs import port_expenses_total
 from pilog_cfr_dss.sources.od_distance import read_distance
 from pilog_cfr_dss.validation.numbers import number
 
-SOURCE = "data/raw/Voyage Estimate.xlsx"
+SOURCE = "data/sources/operations/voyage-estimate.xlsx"
 
 
 def read_voyages(path: Path, od_path: Path | None) -> dict:
