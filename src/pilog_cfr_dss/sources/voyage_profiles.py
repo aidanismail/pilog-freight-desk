@@ -50,7 +50,7 @@ def read_profiles(path: Path, *, include_owned_running: bool = True) -> dict:
                 "market_family": "Supramax" if vessel_class == "Supramax" else "Handysize",
                 "market_class_proxy": vessel_class == "Handymax", "fields": fields,
                 "source_status": "simulation_only_workbook_vessel_profile" if demo else "observed_workbook_profile_transfer",
-                "source_reference": "data/raw/Voyage Estimate.xlsx", "source_sha256": digest,
+                "source_reference": "data/sources/operations/voyage-estimate.xlsx", "source_sha256": digest,
                 "source_cells": {**cells, "port_do_mt_day": "J6"},
                 "source_formula": {"J6": formula},
                 "note": ("Spesifikasi kapal sintetis untuk demo; bukan spesifikasi atau penawaran kapal tertentu dari Fearnpulse. "

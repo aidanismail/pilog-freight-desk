@@ -1,6 +1,12 @@
 # Local environments and Python build/cache files
 venv/
 .venv/
+frontend/node_modules/
+frontend/dist/
+runtime/
+data/sources/market/fis/*.pdf
+data/market_snapshots/fis/*.json
+outputs/
 outputs/ui_cases/
 outputs/ui_review/
 outputs/market_cache/
@@ -22,7 +28,8 @@ htmlcov/
 !.env.example
 .streamlit/secrets.toml
 *.log
-docs/
+docs/*
+!docs/RENCANA_MIGRASI_FREIGHT_DESK.md
 
 # OS/editor files
 .DS_Store

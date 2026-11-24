@@ -14,7 +14,11 @@ from pilog_cfr_dss.sources.fertilizer_reports import read_assessments, for_produ
 from pilog_cfr_dss.reporting.commercial_brief import commercial_brief
 from tests.unit.test_freight_desk import example
 from pilog_cfr_dss.models.freight_desk import terms_catalog
-from tests.unit.test_kobc import quote
+def benchmark():
+    return {"provider": "FIS", "observed_on": "2026-10-30", "ingested_at": "2026-11-24T00:00:00+00:00",
+            "source_sha256": "demo", "source_file": "synthetic.pdf",
+            "series": {code: {"value": value, "unit": "USD/day", "page": 1}
+                       for code, value in (("HS7TC", "16000"), ("S11TC", "22000"))}}
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -29,10 +33,10 @@ class FreightIntegrationTests(unittest.TestCase):
             self.assertEqual(self.case["ports"][side]["time_margin_percent"], "25")
 
     def test_class_hire_is_used_in_engine_brief_and_replay(self):
-        from pilog_cfr_dss.application.freight_desk import sync_kobc
+        from pilog_cfr_dss.application.freight_desk import apply_fis
         c = deepcopy(self.case)
-        data = {"classes": {"Handysize": quote("Handysize"), "Supramax": quote("Supramax")}, "errors": {}}
-        sync_kobc(c, data, date(2026, 11, 20))
+        data = benchmark()
+        apply_fis(c, data)
         result = evaluate(c)
         handy = result["classes"]["Handysize"]["nominal"]
         supra = result["classes"]["Supramax"]["nominal"]
@@ -42,11 +46,11 @@ class FreightIntegrationTests(unittest.TestCase):
             ctx.prec = 40
             self.assertEqual(handy["hire_usd"], handy["days"] * D("16000"))
         brief = commercial_brief(result)
-        self.assertIn("KOBC TC Average", brief)
+        self.assertIn("FIS HS7TC", brief)
         restored = import_case(export_case(c))
         self.assertEqual(calculate(restored), calculate(c))
         override(c, "profiles.Handysize.hire_usd_day", "12000")
-        sync_kobc(c, data, date(2026, 11, 20))
+        apply_fis(c, data)
         self.assertEqual(calculate(c)["classes"]["Handysize"]["nominal"]["hire_rate_usd_day"], D("12000"))
 
     def test_bunker_refresh_updates_provenance_and_keeps_manual_price(self):
@@ -99,7 +103,7 @@ class FreightIntegrationTests(unittest.TestCase):
         self.assertEqual((point["low"],point["high"]),("120.00","120.00"))
 
     def test_hash_cache_mismatch_not_accepted(self):
-        p=next((ROOT/"public").glob("Argus*Nitrogen*.pdf"))
+        p=next((ROOT/"data/sources/market/argus").glob("Argus*Nitrogen*.pdf"))
         with self.assertRaisesRegex(ValueError,"CHANGED"):_read(str(p.resolve()),"wrong")
 
     def test_destination_region_preserves_product_and_basis(self):

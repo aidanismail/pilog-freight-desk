@@ -4,8 +4,8 @@ sys.path.insert(0,str(Path.cwd()/'src'))
 from unittest.mock import patch
 from pilog_cfr_dss.sources.route_distance import ports,distance,catalog_coordinate,searoute_port_coordinate
 root=Path.cwd()
-catalog=root/'data/processed/port_locations_unlocode.json'
-allports=ports(root/'data/raw/Ports.xlsx'); result=[]
+catalog=root/'data/catalogs/port_locations_unlocode.json'
+allports=ports(root/'data/sources/operations/ports.xlsx'); result=[]
 with patch('pilog_cfr_dss.sources.route_distance.geocode_port',side_effect=ValueError('offline_audit')):
     for i,origin in enumerate(allports,1):
         for dest in allports:

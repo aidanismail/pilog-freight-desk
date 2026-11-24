@@ -14,6 +14,10 @@ _request_lock = Lock()
 _last_request = 0.0
 
 
+def port_catalog(root):
+    return [tuple(port) for port in json.loads((root / "data/catalogs/ports.json").read_text(encoding="utf-8"))]
+
+
 def ports(path: Path):
     wb = load_workbook(path, read_only=True, data_only=True)
     try:
@@ -110,7 +114,7 @@ def searoute_port_coordinate(port: str, country: str):
              and str(attrs.get('port','')).upper().startswith(code)]
     alias_hash = None
     if not matches:
-        alias_file=Path(__file__).resolve().parents[3]/'data/processed/port_name_aliases.json'
+        alias_file=Path(__file__).resolve().parents[3]/'data/catalogs/port_name_aliases.json'
         if alias_file.exists():
             aliases_data=json.loads(alias_file.read_text(encoding='utf-8')).get('aliases',[])
             candidates=[entry for entry in aliases_data if entry['port'].casefold()==port.casefold() and entry['country'].casefold()==country.casefold() and entry['locode'].startswith(code)]

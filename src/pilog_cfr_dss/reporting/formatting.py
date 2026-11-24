@@ -1,17 +1,17 @@
 """Pure presentation of numbers and recorded instants; no business calculation."""
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, InvalidOperation, ROUND_CEILING, ROUND_HALF_UP, localcontext
+from decimal import Decimal, InvalidOperation, ROUND_CEILING, ROUND_FLOOR, localcontext
 
 
 def number_text(value, *, minimum=False) -> str:
-    """Two Indonesian decimals; minimums round upwards, regular values half up."""
+    """Show two Indonesian decimals, rounding down except for a required minimum."""
     try:
         value = Decimal(str(value))
         if not value.is_finite():
             return "—"
         with localcontext() as context:
-            context.prec = max(context.prec, len(value.as_tuple().digits), value.adjusted() + 3)
-            value = value.quantize(Decimal("0.01"), rounding=ROUND_CEILING if minimum else ROUND_HALF_UP)
+            context.prec = max(context.prec, len(value.as_tuple().digits), value.adjusted() + 4)
+            value = value.quantize(Decimal("0.01"), rounding=ROUND_CEILING if minimum else ROUND_FLOOR)
         return format(value, ",.2f").translate(str.maketrans({",": ".", ".": ","}))
     except (InvalidOperation, ValueError, TypeError):
         return "—"
@@ -24,7 +24,7 @@ def percent_text(value) -> str:
             return "—"
         with localcontext() as context:
             context.prec = max(context.prec, len(value.as_tuple().digits), value.adjusted() + 6)
-            value = value.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+            value = value.quantize(Decimal("0.0001"), rounding=ROUND_FLOOR)
         return format(value, ".2%").replace(".", ",")
     except (InvalidOperation, ValueError, TypeError):
         return "—"
