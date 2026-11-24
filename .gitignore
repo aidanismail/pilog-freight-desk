@@ -5,7 +5,7 @@ frontend/node_modules/
 frontend/dist/
 runtime/
 data/sources/market/fis/*.pdf
-data/market_snapshots/fis/*.json
+# data/market_snapshots/fis/*.json
 outputs/
 outputs/ui_cases/
 outputs/ui_review/

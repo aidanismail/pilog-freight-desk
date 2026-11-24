@@ -1,0 +1,153 @@
+{
+  "provider": "FIS",
+  "observed_on": "2026-10-30",
+  "ingested_at": "2026-11-24T04:13:10.209521+00:00",
+  "source_file": "fis-freight-index-report_2026-10-30.pdf",
+  "source_sha256": "c223beab1e8ef73b8b8f7a128c6ebc5c941672c8e2ddc78ed1373466557e8b47",
+  "series": {
+    "Supramax Atlantic 3TC": {
+      "value": "23129",
+      "unit": "USD/day",
+      "label": "Supramax Atlantic 3TC",
+      "page": 1
+    },
+    "Supramax Pacific 3TC": {
+      "value": "23450",
+      "unit": "USD/day",
+      "label": "Supramax Pacific 3TC",
+      "page": 1
+    },
+    "Handysize Atlantic 4TC": {
+      "value": "18430",
+      "unit": "USD/day",
+      "label": "Handysize Atlantic 4TC",
+      "page": 1
+    },
+    "Handysize Pacific 3TC": {
+      "value": "18179",
+      "unit": "USD/day",
+      "label": "Handysize Pacific 3TC",
+      "page": 1
+    },
+    "S1B": {
+      "value": "25671",
+      "unit": "USD/day",
+      "label": "S1B",
+      "page": 1
+    },
+    "S1C": {
+      "value": "29450",
+      "unit": "USD/day",
+      "label": "S1C",
+      "page": 1
+    },
+    "S2": {
+      "value": "24575",
+      "unit": "USD/day",
+      "label": "S2",
+      "page": 1
+    },
+    "S3": {
+      "value": "24467",
+      "unit": "USD/day",
+      "label": "S3",
+      "page": 1
+    },
+    "S4A": {
+      "value": "29888",
+      "unit": "USD/day",
+      "label": "S4A",
+      "page": 1
+    },
+    "S4B": {
+      "value": "16222",
+      "unit": "USD/day",
+      "label": "S4B",
+      "page": 1
+    },
+    "S5": {
+      "value": "26203",
+      "unit": "USD/day",
+      "label": "S5",
+      "page": 1
+    },
+    "S8": {
+      "value": "27729",
+      "unit": "USD/day",
+      "label": "S8",
+      "page": 1
+    },
+    "S9": {
+      "value": "23278",
+      "unit": "USD/day",
+      "label": "S9",
+      "page": 1
+    },
+    "S10": {
+      "value": "18047",
+      "unit": "USD/day",
+      "label": "S10",
+      "page": 1
+    },
+    "S15": {
+      "value": "19589",
+      "unit": "USD/day",
+      "label": "S15",
+      "page": 1
+    },
+    "S11TC": {
+      "value": "23569",
+      "unit": "USD/day",
+      "label": "S11TC",
+      "page": 1
+    },
+    "S10TC": {
+      "value": "21535",
+      "unit": "USD/day",
+      "label": "S10TC",
+      "page": 1
+    },
+    "HS1_38": {
+      "value": "10550",
+      "unit": "USD/day",
+      "label": "HS1_38",
+      "page": 1
+    },
+    "HS2_38": {
+      "value": "14679",
+      "unit": "USD/day",
+      "label": "HS2_38",
+      "page": 1
+    },
+    "HS3_38": {
+      "value": "29933",
+      "unit": "USD/day",
+      "label": "HS3_38",
+      "page": 1
+    },
+    "HS5_38": {
+      "value": "17888",
+      "unit": "USD/day",
+      "label": "HS5_38",
+      "page": 1
+    },
+    "HS6_38": {
+      "value": "17975",
+      "unit": "USD/day",
+      "label": "HS6_38",
+      "page": 1
+    },
+    "HS7_38": {
+      "value": "18675",
+      "unit": "USD/day",
+      "label": "HS7_38",
+      "page": 1
+    },
+    "HS7TC": {
+      "value": "18255",
+      "unit": "USD/day",
+      "label": "HS7TC",
+      "page": 1
+    }
+  }
+}
